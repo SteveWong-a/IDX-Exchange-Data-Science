@@ -1,0 +1,25 @@
+# === Data files (too large for GitHub) ===
+6month-focus/
+other-CRMLSSold/
+data/
+*.csv
+
+# === Reference docs ===
+context/
+
+# === Credentials ===
+.env
+*.env
+
+# === Python caches ===
+__pycache__/
+*.pyc
+.ipynb_checkpoints/
+
+# === OS junk ===
+.DS_Store
+Thumbs.db
+
+# === IDE ===
+.vscode/
+.idea/
