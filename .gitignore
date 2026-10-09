@@ -3,6 +3,7 @@
 other-CRMLSSold/
 data/
 *.csv
+!cleaned_crmls_sfr_2025.csv
 
 # === Reference docs ===
 context/
