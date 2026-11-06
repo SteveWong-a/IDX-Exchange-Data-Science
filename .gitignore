@@ -5,6 +5,7 @@ data/
 *.csv
 !cleaned_crmls_sfr_2025.csv
 !week7_advanced_models_summary.csv
+!metrics_summary.csv
 
 # === Reference docs ===
 context/

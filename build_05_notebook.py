@@ -725,24 +725,43 @@ By learning blend weights on held-out validation predictions, we achieve mathema
 # CELL 22: CODE - ENSEMBLE OPTIMIZATION
 # ==============================================================================
 cells.append(nbformat.v4.new_code_cell(r"""# 11. Solve for Optimal Blending Weights on Chronological Validation Holdout
-# Generate validation predictions from sub-train fits
-m_xgb_log.fit(X_sub_tr, y_sub_tr_log)
-sm_v_xgb = np.mean(np.exp(y_sub_tr_log - m_xgb_log.predict(X_sub_tr)))
-val_p_xgb_log = np.exp(m_xgb_log.predict(X_sub_val)) * sm_v_xgb
+# Train dedicated validation estimators on sub-train to generate true holdout validation predictions
+val_xgb_log = xgb.XGBRegressor(
+    n_estimators=1000, learning_rate=0.04, max_depth=6, min_child_weight=4,
+    subsample=0.8, colsample_bytree=0.75, reg_alpha=0.1, reg_lambda=1.5,
+    random_state=RANDOM_STATE, n_jobs=-1
+).fit(X_sub_tr, y_sub_tr_log)
+sm_v_xgb = np.mean(np.exp(y_sub_tr_log - val_xgb_log.predict(X_sub_tr)))
+val_p_xgb_log = np.exp(val_xgb_log.predict(X_sub_val)) * sm_v_xgb
 
-m_lgb_log.fit(X_sub_tr, y_sub_tr_log)
-sm_v_lgb = np.mean(np.exp(y_sub_tr_log - m_lgb_log.predict(X_sub_tr)))
-val_p_lgb_log = np.exp(m_lgb_log.predict(X_sub_val)) * sm_v_lgb
+val_lgb_log = lgb.LGBMRegressor(
+    n_estimators=1100, learning_rate=0.03, num_leaves=63, max_depth=8,
+    min_child_samples=25, subsample=0.8, colsample_bytree=0.75,
+    random_state=RANDOM_STATE, n_jobs=-1, verbose=-1
+).fit(X_sub_tr, y_sub_tr_log)
+sm_v_lgb = np.mean(np.exp(y_sub_tr_log - val_lgb_log.predict(X_sub_tr)))
+val_p_lgb_log = np.exp(val_lgb_log.predict(X_sub_val)) * sm_v_lgb
 
-m_cb_log.fit(X_sub_tr, y_sub_tr_log)
-sm_v_cb = np.mean(np.exp(y_sub_tr_log - m_cb_log.predict(X_sub_tr)))
-val_p_cb_log = np.exp(m_cb_log.predict(X_sub_val)) * sm_v_cb
+val_cb_log = cb.CatBoostRegressor(
+    iterations=1000, learning_rate=0.04, depth=7, l2_leaf_reg=4.0,
+    random_seed=RANDOM_STATE, verbose=0
+).fit(X_sub_tr, y_sub_tr_log)
+sm_v_cb = np.mean(np.exp(y_sub_tr_log - val_cb_log.predict(X_sub_tr)))
+val_p_cb_log = np.exp(val_cb_log.predict(X_sub_val)) * sm_v_cb
 
-m_lgb_dollar.fit(X_sub_tr, y_sub_tr)
-val_p_lgb_dollar = m_lgb_dollar.predict(X_sub_val)
+val_lgb_dollar = lgb.LGBMRegressor(
+    n_estimators=1000, learning_rate=0.03, num_leaves=63, max_depth=8,
+    min_child_samples=25, subsample=0.8, colsample_bytree=0.75,
+    random_state=RANDOM_STATE, n_jobs=-1, verbose=-1
+).fit(X_sub_tr, y_sub_tr)
+val_p_lgb_dollar = val_lgb_dollar.predict(X_sub_val)
 
-m_xgb_dollar.fit(X_sub_tr, y_sub_tr)
-val_p_xgb_dollar = m_xgb_dollar.predict(X_sub_val)
+val_xgb_dollar = xgb.XGBRegressor(
+    n_estimators=900, learning_rate=0.04, max_depth=6, min_child_weight=4,
+    subsample=0.8, colsample_bytree=0.75, reg_alpha=0.1, reg_lambda=1.5,
+    random_state=RANDOM_STATE, n_jobs=-1
+).fit(X_sub_tr, y_sub_tr)
+val_p_xgb_dollar = val_xgb_dollar.predict(X_sub_val)
 
 # Stack validation and test predictions
 V_mat = np.column_stack([val_p_xgb_log, val_p_lgb_log, val_p_cb_log, val_p_lgb_dollar, val_p_xgb_dollar])
