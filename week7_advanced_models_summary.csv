@@ -1,0 +1,11 @@
+Iteration,Model Architecture,Test R²,MAE,RMSE,MdAPE,Within ±10%,Within ±20%
+Week 4 Baseline,Linear Regression (Ridge L2),0.8651,"$190,825","$358,690",11.59%,44.0%,73.2%
+Week 5 Milestone,Decision Tree (Depth 6),0.8562,"$197,661","$370,301",10.98%,46.3%,75.1%
+Week 5 Milestone,Random Forest (100 Trees),0.8875,"$164,314","$327,337",8.04%,58.2%,83.5%
+Week 6 Baseline,Untuned LightGBM (Raw Dollar),0.8980,"$156,031","$311,749",7.90%,59.4%,84.1%
+Week 6 Baseline,Untuned XGBoost (Raw Dollar),0.8967,"$156,793","$313,767",7.88%,59.0%,83.6%
+Week 6 Baseline,Blended Heuristic Ensemble (Wk 6),0.8992,"$154,623","$309,910",7.80%,59.6%,84.8%
+Week 7 Advanced,Tuned CatBoost (Log-Scale),0.8964,"$155,243","$314,876",7.83%,59.6%,84.4%
+Week 7 Advanced,Tuned LightGBM (Log-Scale),0.9018,"$150,052","$306,690",7.50%,61.2%,85.3%
+Week 7 Advanced,Tuned XGBoost (Log-Scale),0.9022,"$149,941","$306,004",7.50%,61.0%,85.3%
+Week 7 Champion,Champion Tuned Super-Ensemble,0.9028,"$149,304","$305,012",7.44%,61.2%,85.4%
